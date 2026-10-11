@@ -1,0 +1,226 @@
+{
+  "info": {
+    "_postman_id": "015ab47b-5d7f-4c4f-a78e-15edf4196252",
+    "name": "CubiSmart API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58868445",
+    "_collection_link": "https://go.postman.co/collection/58868445-015ab47b-5d7f-4c4f-a78e-15edf4196252?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Login devuelve 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"La respuesta incluye token\", function () {\r\n    const json = pm.response.json();\r\n    pm.expect(json).to.have.property(\"token\");\r\n    pm.environment.set(\"token\", json.token);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"usuario\": \"estudiante\",\r\n  \"clave\": \"1234\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02 - GET Reservas (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"GET reservas devuelve 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"La respuesta es una lista de reservas\", function () {\r\n    const json = pm.response.json();\r\n    pm.expect(json).to.be.an(\"array\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/reservas",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reservas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03 - POST Reserva (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"POST reserva devuelve 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"La reserva creada tiene id y los datos enviados\", function () {\r\n    const json = pm.response.json();\r\n    pm.expect(json).to.have.property(\"id\");\r\n    pm.expect(json.cubiculoId).to.eql(2);\r\n    pm.expect(json.fecha).to.eql(\"2026-10-20\");\r\n    pm.environment.set(\"reservaId\", json.id);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"cubiculoId\": 2,\r\n  \"usuario\": \"estudiante\",\r\n  \"fecha\": \"2026-10-20\",\r\n  \"horaInicio\": \"14:00\",\r\n  \"horaFin\": \"16:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/reservas",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reservas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04 - PUT Reserva (actualizar)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"PUT reserva devuelve 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"La reserva quedó actualizada\", function () {\r\n    const json = pm.response.json();\r\n    pm.expect(json.id).to.eql(Number(pm.environment.get(\"reservaId\")));\r\n    pm.expect(json.fecha).to.eql(\"2026-10-25\");\r\n    pm.expect(json.horaInicio).to.eql(\"10:00\");\r\n    pm.expect(json.horaFin).to.eql(\"12:00\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fecha\": \"2026-10-25\",\r\n  \"horaInicio\": \"10:00\",\r\n  \"horaFin\": \"12:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 - DELETE Reserva",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"DELETE reserva devuelve 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"El mensaje confirma la eliminación\", function () {\r\n    const json = pm.response.json();\r\n    pm.expect(json.mensaje).to.eql(\"Reserva eliminada\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06 - GET Reserva eliminada (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"La reserva eliminada devuelve 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"El mensaje indica que no existe\", function () {\r\n    const json = pm.response.json();\r\n    pm.expect(json.error).to.eql(\"Reserva no encontrada\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
